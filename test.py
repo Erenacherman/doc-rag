@@ -1,32 +1,42 @@
-from src.retrieval.retriever import Retriever
+from src.rag.pipeline import RAGPipeline
 
 
-retriever = Retriever()
+rag = RAGPipeline()
 
 
-query = "What is machine learning?"
+questions = [
+    "What is machine learning?",
+    "What is supervised learning?",
+    "What is a neural network?",
+]
 
 
-results = retriever.retrieve_with_scores(
-    query,
-    k=5
-)
+for question in questions:
 
+    print("\n" + "=" * 70)
 
-print("=" * 60)
-print("SIMILARITY SEARCH TEST")
-print("=" * 60)
+    print("QUESTION:")
+    print(question)
 
+    result = rag.answer(question)
 
-for i, (document, score) in enumerate(results):
+    print("\nANSWER:")
+    print(result["answer"])
 
-    print("\n" + "-" * 60)
+    print("\nSOURCES:")
 
-    print(f"RESULT {i + 1}")
+    for document in result["documents"]:
 
-    print("Score:", score)
+        source = document.metadata.get(
+            "source",
+            "Unknown"
+        )
 
-    print("Page:", document.metadata.get("page"))
+        page = document.metadata.get(
+            "page",
+            "Unknown"
+        )
 
-    print("Text:")
-    print(document.page_content[:500])
+        print(
+            f"- {source} | Page {page}"
+        )
