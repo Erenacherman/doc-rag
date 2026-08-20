@@ -1,37 +1,42 @@
-from src.embeddings.embedder import EmbeddingManager
-from src.vectorstore.chroma_store import VectorStoreManager
-
-
 class Retriever:
 
-    def __init__(
+    def __init__(self, vector_store):
+        self.vector_store = vector_store
+
+    def retrieve(
         self,
-        persist_directory: str = "vectorstore/chroma"
+        query,
+        k=4,
+        progress_callback=None
     ):
 
-        embedding_manager = EmbeddingManager()
+        # -----------------------------------------
+        # 1. Start search
+        # -----------------------------------------
 
-        embeddings = embedding_manager.get_embeddings()
+        if progress_callback:
+            progress_callback(
+                45,
+                "🔎 Searching vector database..."
+            )
 
-        self.vector_store = VectorStoreManager(
-            embedding_function=embeddings,
-            persist_directory=persist_directory
-        )
+        # -----------------------------------------
+        # 2. Similarity search
+        # -----------------------------------------
 
-    def retrieve(self, query: str, k: int = 4):
-
-        return self.vector_store.similarity_search(
+        documents = self.vector_store.similarity_search(
             query,
             k=k
         )
 
-    def retrieve_with_scores(
-        self,
-        query: str,
-        k: int = 4
-    ):
+        # -----------------------------------------
+        # 3. Search completed
+        # -----------------------------------------
 
-        return self.vector_store.similarity_search_with_score(
-            query,
-            k=k
-        )
+        if progress_callback:
+            progress_callback(
+                60,
+                f"✅ Retrieved {len(documents)} relevant chunks"
+            )
+
+        return documents

@@ -1,42 +1,14 @@
-from src.rag.pipeline import RAGPipeline
+from src.llm.cloud_llm import CloudLLM
 
 
-rag = RAGPipeline()
+llm = CloudLLM()
 
+answer = llm.generate(
+    "Explain vector databases in very simple words."
+)
 
-questions = [
-    "What is machine learning?",
-    "What is supervised learning?",
-    "What is a neural network?",
-]
-
-
-for question in questions:
-
-    print("\n" + "=" * 70)
-
-    print("QUESTION:")
-    print(question)
-
-    result = rag.answer(question)
-
-    print("\nANSWER:")
-    print(result["answer"])
-
-    print("\nSOURCES:")
-
-    for document in result["documents"]:
-
-        source = document.metadata.get(
-            "source",
-            "Unknown"
-        )
-
-        page = document.metadata.get(
-            "page",
-            "Unknown"
-        )
-
-        print(
-            f"- {source} | Page {page}"
-        )
+print("\n")
+print("=" * 60)
+print("OPENROUTER RESPONSE")
+print("=" * 60)
+print(answer)
